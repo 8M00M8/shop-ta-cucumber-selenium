@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <Properties>
+        <Property name="log.level">ERROR</Property>
+    </Properties>
+    <Appenders>
+        <Console name="Console_Main">
+            <PatternLayout
+                    pattern="%highlight{%-5level %logger{1} %d{ISO8601} %class{1}.%method(%file:%line) -}{TRACE=blue} %msg%n"
+                    disableAnsi="false"/>
+        </Console>
+        <Console name="Console_System">
+            <PatternLayout pattern="%highlight{%-5level %logger{1} %d{ISO8601} -}{TRACE=blue} %msg%n"
+                           disableAnsi="false"/>
+        </Console>
+    </Appenders>
+    <Loggers>
+        <Logger name="System" level="ALL" additivity="false">
+            <AppenderRef ref="Console_System"/>
+        </Logger>
+        <Root level="${sys:log.level}">
+            <AppenderRef ref="Console_Main"/>
+        </Root>
+    </Loggers>
+</Configuration>

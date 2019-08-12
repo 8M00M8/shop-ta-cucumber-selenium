@@ -1,16 +1,65 @@
 plugins {
     id 'java'
+    id 'io.qameta.allure' version '2.8.1'
 }
 
-group 'lv.8m00m8'
+group 'lv.m8008m'
 version '1.0-SNAPSHOT'
 
-sourceCompatibility = 1.8
+sourceCompatibility = 1.8 // 12
+
+ext {
+    cucumberVersion = '4.7.1'
+    assertJVersion = '3.13.2'
+    seleniumVersion = '3.141.59'
+    webdrivermanagerVersion = '3.6.2'
+    log4jVersion = '2.12.1'
+    allureVersion = '2.12.1'
+}
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.12'
+    testImplementation "io.cucumber:cucumber-java:${cucumberVersion}"
+    testImplementation "io.cucumber:cucumber-picocontainer:${cucumberVersion}"
+    testImplementation "org.assertj:assertj-core:${assertJVersion}"
+    testImplementation "org.seleniumhq.selenium:selenium-java:${seleniumVersion}"
+    testImplementation "io.github.bonigarcia:webdrivermanager:${webdrivermanagerVersion}"
+    testImplementation "org.apache.logging.log4j:log4j-api:${log4jVersion}"
+    testImplementation "org.apache.logging.log4j:log4j-core:${log4jVersion}"
+    testImplementation "org.apache.logging.log4j:log4j-slf4j-impl:${log4jVersion}"
+    testImplementation "io.qameta.allure:allure-cucumber4-jvm:${allureVersion}"
+}
+
+configurations {
+    cucumberRuntime {
+        extendsFrom testImplementation
+    }
+}
+
+allure {
+    version = allureVersion // report generator version
+    clean = true
+}
+
+task cucumber() {
+    dependsOn assemble, testClasses
+    doLast {
+        System.setProperty('allure.results.directory', "$project.buildDir/allure-results")
+        javaexec {
+            main = "io.cucumber.core.cli.Main"
+            classpath = configurations.cucumberRuntime + sourceSets.main.output + sourceSets.test.output
+            args = ['--plugin', 'pretty',
+                    '--plugin', 'html:build/html',
+                    '--plugin', 'io.qameta.allure.cucumber4jvm.AllureCucumber4Jvm',
+                    '--strict',
+                    '--threads ', System.properties['threads'],
+                    '--tags', System.properties['tags'],
+                    '--glue', 'lv.m8008m',
+                    'src/test/resources/features']
+            systemProperties = System.getProperties()
+        }
+    }
 }
