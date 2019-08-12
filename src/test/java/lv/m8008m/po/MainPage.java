@@ -12,7 +12,7 @@ public class MainPage extends BasePage {
     private static final By GRID_CATEGORIES = By.cssSelector(".main .category-children ul > li a span");
     private static final By GRID_TITLE = By.cssSelector(".main h1");
     private static final By BANNER_CLOSE_ICON = By.cssSelector(".banner .popup-close");
-    public static final By SHOPPING_CART_ICON = By.cssSelector(".header-cart a");
+    private static final By SHOPPING_CART_ICON = By.cssSelector(".header-cart a");
 
     public MainPage(WDriver driver) {
         super(driver);
